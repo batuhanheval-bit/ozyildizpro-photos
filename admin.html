@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <title>ÖzyıldızPRO – Admin Paneli</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+  <h1 class="title">ÖzyıldızPRO Admin Paneli</h1>
+
+  <div class="card">
+      <h2>📂 Fotoğraf Klasörü Seç</h2>
+
+      <label>👤 Müşteri Adı (zorunlu):</label>
+      <input type="text" id="customerName" placeholder="Örn: AHMET_HATICE">
+
+      <br><br>
+
+      <input type="file" id="folderInput" webkitdirectory directory multiple>
+
+      <button class="btn" onclick="uploadPhotos()">GitHub’a Yükle</button>
+
+      <hr>
+
+      <h3>📎 Müşteri Linki</h3>
+      <input type="text" id="clientURL" readonly placeholder="Henüz oluşturulmadı">
+      <button class="btn-small" onclick="copyURL()">Kopyala</button>
+  </div>
+
+  <div class="card">
+      <h2>📝 Seçim Kodlarını Yapıştır</h2>
+
+      <textarea id="pasteInput" placeholder="Buraya linkleri yapıştırın..."></textarea>
+      <button class="btn" onclick="processPastedCodes()">Kodları İşle</button>
+  </div>
+
+  <div class="card">
+      <h2>📁 Bilgisayar Fotoğraf Klasörü</h2>
+
+      <input type="file" id="localFolder" webkitdirectory directory multiple>
+      <button class="btn" onclick="matchAndCopy()">Eşleşen Fotoğrafları Topla</button>
+  </div>
+
+  <div class="card">
+      <h2>📄 Log</h2>
+      <textarea id="log" readonly></textarea>
+  </div>
+
+  <script src="js/admin.js"></script>
+</body>
+</html>

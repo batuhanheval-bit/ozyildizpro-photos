@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>Fotoğraf Seçimi</title>
+    <link rel="stylesheet" href="css/client.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f5f5;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+        }
+
+        .title {
+            margin-top: 20px;
+            font-size: 30px;
+        }
+
+        #customerName {
+            font-size: 22px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 15px;
+            padding: 15px;
+            width: 95%;
+            margin: auto;
+        }
+
+        .photoItem {
+            width: 100%;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.2s;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+            border: 4px solid transparent;
+        }
+
+        .photoItem:hover {
+            transform: scale(1.02);
+        }
+
+        .selected {
+            border-color: #0080ff;
+            box-shadow: 0 0 12px rgba(0,128,255,0.8);
+        }
+
+        #finishBtn {
+            margin: 20px auto;
+            padding: 15px 30px;
+            font-size: 18px;
+            background: #0080ff;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        #finishBtn:hover {
+            background: #0066cc;
+        }
+
+        #resultBox {
+            width: 90%;
+            height: 200px;
+            margin-top: 20px;
+            display: none;
+            font-size: 14px;
+        }
+
+        #copyBtn {
+            display: none;
+            margin: 10px auto;
+            padding: 10px 25px;
+            background: #444;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        #copyBtn:hover {
+            background: black;
+        }
+    </style>
+</head>
+
+<body>
+
+<h1 class="title">📸 Fotoğraf Seçimi</h1>
+<h2 id="customerName"></h2>
+
+<div id="photoGrid" class="grid"></div>
+
+<button id="finishBtn" onclick="finishSelection()">Seçimleri Tamamla</button>
+
+<textarea id="resultBox" readonly></textarea>
+<button id="copyBtn" onclick="copyResult()">Kopyala</button>
+
+<script src="js/client.js"></script>
+</body>
+</html>

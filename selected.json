@@ -1,0 +1,74 @@
+const { app, BrowserWindow, ipcMain, dialog } = require('electron');
+const path = require('path');
+const fs = require('fs');
+const fetch = require('node-fetch');
+const { exec } = require('child_process');
+
+function createWindow() {
+  const win = new BrowserWindow({
+    width: 1200,
+    height: 800,
+    webPreferences: {
+      preload: path.join(__dirname, 'preload.js'),
+      contextIsolation: true,
+      nodeIntegration: false
+    },
+    icon: path.join(__dirname, 'icon.png')
+  });
+
+  win.loadFile('public/index.html');
+}
+
+app.whenReady().then(() => {
+  createWindow();
+  app.on('activate', () => {
+    if (BrowserWindow.getAllWindows().length === 0) createWindow();
+  });
+});
+
+app.on('window-all-closed', () => {
+  if (process.platform !== 'darwin') app.quit();
+});
+
+// 📁 Klasör seçme
+ipcMain.handle('selectFolder', async () => {
+  const result = await dialog.showOpenDialog({
+    properties: ['openDirectory']
+  });
+  return result.filePaths[0];
+});
+
+// 🖼️ Albüm oluşturma
+ipcMain.handle('createAlbum', async () => {
+  const res = await fetch('http://localhost:3000/api/albums', { method: 'POST' });
+  return res.json();
+});
+
+// 📸 Fotoğraf yükleme
+ipcMain.handle('uploadPhotos', async (event, { folderPath, albumId }) => {
+  const files = fs.readdirSync(folderPath).filter(file => {
+    const ext = path.extname(file).toLowerCase();
+    return ['.jpg', '.jpeg', '.png'].includes(ext);
+  });
+
+  for (const file of files) {
+    const filePath = path.join(folderPath, file);
+    const buffer = fs.readFileSync(filePath);
+    await fetch('http://localhost:3000/api/selections', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/octet-stream',
+        'album-id': albumId,
+        'file-name': file
+      },
+      body: buffer
+    });
+  }
+
+  return { count: files.length };
+});
+
+// 📲 WhatsApp link gönder
+ipcMain.handle('sendWhatsApp', async (event, link) => {
+  exec(`start https://wa.me/?text=${encodeURIComponent(link)}`);
+});

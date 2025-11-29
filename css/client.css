@@ -1,0 +1,47 @@
+body {
+    font-family: Arial;
+    text-align: center;
+    background: #fafafa;
+}
+
+.title {
+    font-size: 26px;
+    margin-top: 20px;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    padding: 20px;
+}
+
+.grid img {
+    width: 100%;
+    border-radius: 10px;
+    cursor: pointer;
+    border: 3px solid transparent;
+    transition: 0.2s;
+}
+
+.grid img.selected {
+    border: 3px solid #ff9800;
+}
+
+#finishBtn {
+    background: #ff9800;
+    color: white;
+    padding: 12px;
+    border: none;
+    margin-top: 20px;
+    font-size: 18px;
+    border-radius: 8px;
+}
+
+#resultBox {
+    width: 90%;
+    height: 160px;
+    margin-top: 20px;
+    font-size: 14px;
+    padding: 10px;
+}

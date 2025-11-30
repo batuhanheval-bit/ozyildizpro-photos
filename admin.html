@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>ÖzyıldızPRO – Admin Paneli</title>
-  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/admin.css">
 </head>
 
 <body>
@@ -20,7 +20,7 @@
 
       <input type="file" id="folderInput" webkitdirectory directory multiple>
 
-      <button class="btn" onclick="uploadPhotos()">GitHub’a Yükle</button>
+      <button class="btn" onclick="uploadPhotos()">GitHub’a ZIP Gönder</button>
 
       <hr>
 
@@ -48,6 +48,11 @@
       <textarea id="log" readonly></textarea>
   </div>
 
+  <!-- ✔ ZIP oluşturmak için gerekli JSZip buraya EKLENDİ -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+
+  <!-- ✔ Admin panel kodumuz -->
   <script src="js/admin.js"></script>
+
 </body>
 </html>

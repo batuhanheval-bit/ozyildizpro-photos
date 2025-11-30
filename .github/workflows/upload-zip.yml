@@ -1,0 +1,35 @@
+
+name: Upload ZIP to GitHub
+
+on:
+  repository_dispatch:
+    types: [photo_zip_upload]
+
+jobs:
+  upload:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Repo'yu indir
+        uses: actions/checkout@v3        
+
+      - name: ZIP dosyasını oluştur
+        run: |
+          echo "${{ github.event.client_payload.zip_base64 }}" | base64 --decode > upload.zip
+
+      - name: ZIP'i aç
+        run: unzip upload.zip -d extracted
+
+      - name: Fotoğrafları klasöre taşı
+        run: |
+          CUSTOMER="${{ github.event.client_payload.customer }}"
+          mkdir -p photos/$CUSTOMER
+          cp -r extracted/* photos/$CUSTOMER/
+
+      - name: Commit ve Push
+        run: |
+          git config user.name "AutoUploader"
+          git config user.email "action@github.com"
+          git add .
+          git commit -m "ZIP upload for ${{ github.event.client_payload.customer }}"
+          git push

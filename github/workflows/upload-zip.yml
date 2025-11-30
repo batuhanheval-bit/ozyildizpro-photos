@@ -1,36 +1,34 @@
-name: Upload Photos ZIP
+name: Upload ZIP to GitHub
 
 on:
-  repository_dispatch:
-    types: [photo_zip_upload]
+  workflow_dispatch:
+    inputs:
+      customer:
+        description: "Müşteri adı (sadece küçük harf, boşluksuz)"
+        required: true
+      zipfile:
+        description: "Yüklenecek ZIP dosyası (base64 string olarak)"
+        required: true
 
 jobs:
-  unzip_and_upload:
+  upload:
     runs-on: ubuntu-latest
-    
+
     steps:
-      - name: Repo’yu indir
+      - name: Klasör oluştur
+        run: mkdir -p photos/${{ github.event.inputs.customer }}
+
+      - name: ZIP dosyasını oluştur
+        run: |
+          echo "${{ github.event.inputs.zipfile }}" | base64 --decode > photos/${{ github.event.inputs.customer }}/photos.zip
+
+      - name: Repo checkout
         uses: actions/checkout@v3
 
-      - name: ZIP dosyasını kaydet
+      - name: Commit & Push
         run: |
-          echo "${{ github.event.client_payload.zip_base64 }}" | base64 -d > upload.zip
-
-      - name: ZIP’i aç
-        run: |
-          mkdir extracted
-          unzip upload.zip -d extracted
-
-      - name: Fotoğrafları doğru klasöre taşı
-        run: |
-          CUSTOMER="${{ github.event.client_payload.customer }}"
-          mkdir -p photos/$CUSTOMER
-          cp -r extracted/* photos/$CUSTOMER/
-
-      - name: Commit ve push
-        run: |
-          git config user.email "action@github.com"
-          git config user.name "GitHub Action"
-          git add .
-          git commit -m "ZIP upload for ${{ github.event.client_payload.customer }}"
+          git config user.name "AutoUploader"
+          git config user.email "actions@github.com"
+          git add photos/${{ github.event.inputs.customer }}/photos.zip
+          git commit -m "ZIP upload for ${{ github.event.inputs.customer }}"
           git push

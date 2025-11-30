@@ -1,7 +1,7 @@
 /* --------------------------------------------
    GITHUB AYARLARI
 -------------------------------------------- */
-const GITHUB_TOKEN = "ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
+const GITHUB_TOKEN = "ghp_dxUfKPiXRBHE6adEE2nxXky1BWNLKg2z1111";
 const REPO_OWNER = "batuhanheval-bit";
 const REPO_NAME = "ozyildizpro-photos";
 
@@ -147,3 +147,4 @@ function copyURL() {
     navigator.clipboard.writeText(inp.value);
     alert("📎 Müşteri linki kopyalandı!");
 }
+

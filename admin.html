@@ -2,56 +2,87 @@
 <html lang="tr">
 <head>
   <meta charset="UTF-8">
-  <title>ÖzyıldızPRO – Admin Paneli</title>
-  <link rel="stylesheet" href="css/admin.css">
-</head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ÖzyıldızPRO Foto Upload Paneli</title>
 
+  <style>
+    body {
+      font-family: Arial;
+      max-width: 600px;
+      margin: auto;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+
+    h1 {
+      text-align: center;
+      color: #222;
+    }
+
+    #photoList {
+      margin-top: 20px;
+    }
+
+    .photo-item {
+      background: white;
+      padding: 10px;
+      margin-bottom: 10px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border: 1px solid #ddd;
+    }
+
+    .photo-item img {
+      width: 80px;
+      height: 80px;
+      object-fit: cover;
+      border-radius: 6px;
+    }
+
+    button {
+      background: #007bff;
+      color: white;
+      border: none;
+      padding: 8px 15px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #0056b3;
+    }
+
+    #downloadZip {
+      width: 100%;
+      margin-top: 20px;
+      background: #28a745;
+    }
+
+    #downloadZip:hover {
+      background: #1e7e34;
+    }
+  </style>
+</head>
 <body>
 
-  <h1 class="title">ÖzyıldızPRO Admin Paneli</h1>
+  <h1>📸 ÖzyıldızPRO Foto Upload Paneli</h1>
 
-  <div class="card">
-      <h2>📂 Fotoğraf Klasörü Seç</h2>
+  <label>
+    Fotoğraf Yükle:
+    <input type="file" id="photoUpload" accept="image/*">
+  </label>
 
-      <label>👤 Müşteri Adı (zorunlu):</label>
-      <input type="text" id="customerName" placeholder="Örn: AHMET_HATICE">
+  <div id="photoList"></div>
 
-      <br><br>
+  <button id="downloadZip">Seçilenleri ZIP Olarak İndir</button>
 
-      <input type="file" id="folderInput" webkitdirectory directory multiple>
-
-      <button class="btn" onclick="uploadPhotos()">GitHub’a ZIP Gönder</button>
-
-      <hr>
-
-      <h3>📎 Müşteri Linki</h3>
-      <input type="text" id="clientURL" readonly placeholder="Henüz oluşturulmadı">
-      <button class="btn-small" onclick="copyURL()">Kopyala</button>
-  </div>
-
-  <div class="card">
-      <h2>📝 Seçim Kodlarını Yapıştır</h2>
-
-      <textarea id="pasteInput" placeholder="Buraya linkleri yapıştırın..."></textarea>
-      <button class="btn" onclick="processPastedCodes()">Kodları İşle</button>
-  </div>
-
-  <div class="card">
-      <h2>📁 Bilgisayar Fotoğraf Klasörü</h2>
-
-      <input type="file" id="localFolder" webkitdirectory directory multiple>
-      <button class="btn" onclick="matchAndCopy()">Eşleşen Fotoğrafları Topla</button>
-  </div>
-
-  <div class="card">
-      <h2>📄 Log</h2>
-      <textarea id="log" readonly></textarea>
-  </div>
-
-  <!-- ✔ ZIP oluşturmak için gerekli JSZip buraya EKLENDİ -->
+  <!-- ZIP KÜTÜPHANESI -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 
-  <!-- ✔ Admin panel kodumuz -->
+  <!-- Foto upload + admin kodları -->
+  <script src="js/uploadPhotos.js"></script>
   <script src="js/admin.js"></script>
 
 </body>

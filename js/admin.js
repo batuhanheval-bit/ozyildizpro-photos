@@ -69,9 +69,12 @@ async function uploadPhotos() {
         });
 
         if (!upload.ok) {
-            log.value += `❌ HATA → ${file.name}\n`;
-        }
-    }
+    log.value += `❌ HATA → ${file.name}\n`;
+
+    const errText = await upload.text();      // GitHub’dan gelen gerçek hata
+    console.error("UPLOAD ERROR:", errText);  // Konsola yaz
+    log.value += `⛔ GitHub Yanıtı:\n${errText}\n`; // LOG’a yaz
+}
 
     log.value += "\n✔ TÜM FOTOĞRAFLAR GITHUB'A YÜKLENDİ!\n";
 
@@ -133,3 +136,4 @@ function copyURL() {
     navigator.clipboard.writeText(inp.value);
     alert("📎 Müşteri linki kopyalandı!");
 }
+

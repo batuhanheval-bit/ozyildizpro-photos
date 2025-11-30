@@ -79,4 +79,5 @@ document.getElementById("downloadZip").addEventListener("click", async () => {
   const link = document.createElement("a");
   link.href = URL.createObjectURL(content);
   link.download = "OzyildizPRO_Fotolar.zip";
-  link.click()
+  link.click();
+});

@@ -1,116 +1,82 @@
-/* ---------------------------------------------------
-   FOTOĞRAFLARI ZIP OLARAK GÖNDERME (TOKEN YOK!)
---------------------------------------------------- */
+// --- FOTOĞRAF YÜKLEME ---
+async function uploadPhoto(file) {
+  const formData = new FormData();
+  formData.append("file", file);
 
-// ZIP oluşturmak için JSZip kullanacağız (admin panel EXE'de çalışacak)
-async function uploadPhotos() {
-    const rawCustomer = document.getElementById("customerName").value.trim();
-    const files = document.getElementById("folderInput").files;
-    const log = document.getElementById("log");
+  const res = await fetch("/api/upload", {
+    method: "POST",
+    body: formData,
+  });
 
-    if (!rawCustomer) return alert("⚠ Müşteri adını yaz!");
-    if (!files.length) return logAdd("❌ Fotoğraf klasörü seçilmedi!");
+  const data = await res.json();
+  if (!data.success) {
+    alert("HATA: " + data.error);
+    return null;
+  }
 
-    const safeCustomer = rawCustomer
-        .normalize("NFKD")
-        .replace(/[^\w]/g, "")
-        .toLowerCase();
-
-    logAdd(`📁 ZIP hazırlanıyor → ${safeCustomer}`);
-
-    // ZIP oluştur
-    const zip = new JSZip();
-
-    for (const file of files) {
-        if (!/\.(jpg|jpeg|png|raw|arw)$/i.test(file.name)) continue;
-
-        const data = await file.arrayBuffer();
-        zip.file(file.name, data);
-    }
-
-    // Base64 olarak al
-    const zipBase64 = await zip.generateAsync({ type: "base64" });
-
-    logAdd(`📦 ZIP hazır! GitHub’a gönderiliyor...`);
-
-    // GitHub Actions çalıştır
-    await fetch(`https://api.github.com/repos/batuhanheval-bit/ozyildizpro-photos/actions/workflows/upload-zip.yml/dispatches`, {
-        method: "POST",
-        headers: {
-            "Accept": "application/vnd.github+json",
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-            ref: "main",
-            inputs: {
-                customer: safeCustomer,
-                zipfile: zipBase64
-            }
-        })
-    });
-
-    logAdd("🎉 ZIP gönderildi!");
-    document.getElementById("clientURL").value =
-        `${window.location.origin}/client.html?user=${safeCustomer}`;
+  return data.url;
 }
 
-/* ---------------------------------------------------
-   LOG FONKSİYONU
---------------------------------------------------- */
-function logAdd(msg) {
-    const log = document.getElementById("log");
-    log.value += msg + "\n";
+// --- FOTOĞRAF SEÇME ve LİSTELEME ---
+let photoList = [];
+
+document.getElementById("photoUpload").addEventListener("change", async (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  const url = await uploadPhoto(file);
+  if (!url) return;
+
+  photoList.push(url);
+  updatePhotoList();
+});
+
+// --- LİSTEYİ EKRANA YAZDIR ---
+function updatePhotoList() {
+  const container = document.getElementById("photoList");
+  container.innerHTML = "";
+
+  photoList.forEach((url, index) => {
+    const div = document.createElement("div");
+    div.className = "photo-item";
+
+    div.innerHTML = `
+      <input type="checkbox" data-index="${index}">
+      <img src="${url}" />
+      <button onclick="removePhoto(${index})">Sil</button>
+    `;
+
+    container.appendChild(div);
+  });
 }
 
-/* ---------------------------------------------------
-   SEÇİM KODLARI OKU
---------------------------------------------------- */
-let selectedList = [];
-
-function processPastedCodes() {
-    const text = document.getElementById("pasteInput").value.trim();
-    if (!text) return alert("⚠ Kod yapıştırmadın!");
-
-    selectedList = text.split(/\r?\n/).filter(Boolean);
-    logAdd(`✔ ${selectedList.length} kod işlendi`);
+function removePhoto(i) {
+  photoList.splice(i, 1);
+  updatePhotoList();
 }
 
-/* ---------------------------------------------------
-   EŞLEŞEN FOTOĞRAFLARI KOPYALA
---------------------------------------------------- */
-async function matchAndCopy() {
-    const files = document.getElementById("localFolder").files;
-    const log = document.getElementById("log");
+// --- ZIP OLARAK İNDİR ---
+document.getElementById("downloadZip").addEventListener("click", async () => {
+  const zip = new JSZip();
+  const selected = document.querySelectorAll('.photo-item input:checked');
 
-    if (!selectedList.length) return alert("⚠ Önce kodları yapıştır!");
-    if (!files.length) return alert("⚠ Fotoğraf klasörü seç!");
+  if (selected.length === 0) {
+    alert("Hiç foto seçmedin kral.");
+    return;
+  }
 
-    const root = await window.showDirectoryPicker();
-    const dest = await root.getDirectoryHandle("Secilenler", { create: true });
+  let folder = zip.folder("OzyildizPRO_fotolar");
 
-    let count = 0;
+  for (const item of selected) {
+    const index = item.getAttribute("data-index");
+    const url = photoList[index];
 
-    for (const file of files) {
-        if (!selectedList.some(link => link.includes(file.name))) continue;
+    const blob = await fetch(url).then(res => res.blob());
+    folder.file(`foto_${index}.jpg`, blob);
+  }
 
-        const fh = await dest.getFileHandle(file.name, { create: true });
-        const w = await fh.createWritable();
-        await w.write(await file.arrayBuffer());
-        await w.close();
-
-        logAdd(`✔ Kopyalandı → ${file.name}`);
-        count++;
-    }
-
-    logAdd(`🎉 Toplam ${count} fotoğraf kopyalandı!`);
-}
-
-/* ---------------------------------------------------
-   LİNK KOPYALA
---------------------------------------------------- */
-function copyURL() {
-    const inp = document.getElementById("clientURL");
-    inp.select();
-    navigator.clipboard.writeText(inp.value);
-    alert("📎 Müşteri linki kopyalandı!");
-}
+  const content = await zip.generateAsync({ type: "blob" });
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(content);
+  link.download = "OzyildizPRO_Fotolar.zip";
+  link.click()

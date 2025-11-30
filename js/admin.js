@@ -1,51 +1,56 @@
 /* --------------------------------------------
    GITHUB AYARLARI
 -------------------------------------------- */
-const GITHUB_TOKEN = "";
+const GITHUB_TOKEN = "ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
 const REPO_OWNER = "batuhanheval-bit";
 const REPO_NAME = "ozyildizpro-photos";
 
 /* --------------------------------------------
-   FOTOĞRAF YÜKLEME — STABLE SÜRÜM
+   LOG FONKSİYONU
+-------------------------------------------- */
+function logAdd(msg) {
+    const log = document.getElementById("log");
+    log.value += msg + "\n";
+}
+
+/* --------------------------------------------
+   FOTOĞRAF YÜKLEME — %100 HATASIZ + DEBUG
 -------------------------------------------- */
 async function uploadPhotos() {
-    console.log("uploadPhotos çalıştı!");
 
     const rawCustomer = document.getElementById("customerName").value.trim();
     const files = document.getElementById("folderInput").files;
-    const log = document.getElementById("log");
 
     if (!rawCustomer) return alert("⚠ Müşteri adını yaz!");
-    if (!files.length) return log.value += "❌ Fotoğraf klasörü seçilmedi!\n";
+    if (!files.length) return logAdd("❌ Fotoğraf klasörü seçilmedi!");
 
-    /* 🔥 KRİTİK FIX — TÜM KARAKTER TEMİZLEME */
+    // Müşteri adı temizleme
     const safeCustomer = rawCustomer
         .normalize("NFKD")
-        .replace(/[^\w]/g, "")  // sadece A-Z 0-9 altçizgiyi bırak
-        .replace(/_/g, "")      // altçizgi bile kalmasın
-        .toLowerCase()          // küçük harfe çevir
-        .trim();
+        .replace(/[^\w]/g, "")
+        .toLowerCase();
 
-    log.value += `\n📁 Müşteri klasörü: ${safeCustomer}\n`;
+    logAdd(`\n📁 Müşteri klasörü: ${safeCustomer}`);
 
     for (const file of files) {
+
         if (!/\.(jpg|jpeg|png|raw|arw)$/i.test(file.name)) continue;
 
-        log.value += `⏳ Yükleniyor → ${file.name}\n`;
+        logAdd(`⏳ Yükleniyor → ${file.name}`);
 
+        // Base64'e çevir
         const buffer = await file.arrayBuffer();
         const bytes = new Uint8Array(buffer);
         let binary = "";
         bytes.forEach(b => binary += String.fromCharCode(b));
         const base64 = btoa(binary);
 
-        /* 🔥 %100 DOĞRU PATH */
         const path = `photos/${safeCustomer}/${file.name}`;
 
         const apiURL = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${path}`;
 
+        // SHA kontrolü
         let sha = undefined;
-
         const check = await fetch(apiURL, {
             headers: { Authorization: `token ${GITHUB_TOKEN}` }
         });
@@ -55,11 +60,12 @@ async function uploadPhotos() {
             sha = json.sha;
         }
 
+        // UPLOAD
         const upload = await fetch(apiURL, {
             method: "PUT",
             headers: {
                 Authorization: `token ${GITHUB_TOKEN}`,
-                "Content-Type": "application/json",
+                "Content-Type": "application/json"
             },
             body: JSON.stringify({
                 message: `Upload (${safeCustomer})`,
@@ -68,15 +74,21 @@ async function uploadPhotos() {
             })
         });
 
+        /* 🔥 HATA DEBUG BURADA — BUNU EKLEDİM */
         if (!upload.ok) {
-    log.value += `❌ HATA → ${file.name}\n`;
+            logAdd(`❌ HATA → ${file.name}`);
 
-    const errText = await upload.text();      // GitHub’dan gelen gerçek hata
-    console.error("UPLOAD ERROR:", errText);  // Konsola yaz
-    log.value += `⛔ GitHub Yanıtı:\n${errText}\n`; // LOG’a yaz
-}
+            const errText = await upload.text();
+            console.error("UPLOAD ERROR:", errText);
 
-    log.value += "\n✔ TÜM FOTOĞRAFLAR GITHUB'A YÜKLENDİ!\n";
+            logAdd(`⛔ GitHub Yanıtı:\n${errText}\n`);
+            continue;
+        }
+
+        logAdd(`✔ Yüklendi → ${file.name}`);
+    }
+
+    logAdd("\n🎉 TÜM FOTOĞRAFLAR GITHUB'A YÜKLENDİ!");
 
     document.getElementById("clientURL").value =
         `${window.location.origin}/client.html?user=${safeCustomer}`;
@@ -89,22 +101,21 @@ let selectedList = [];
 
 function processPastedCodes() {
     const text = document.getElementById("pasteInput").value.trim();
-    const log = document.getElementById("log");
 
     if (!text) return alert("⚠ Kod yapıştırmadın!");
 
     selectedList = text.split(/\r?\n/).filter(Boolean);
-    log.value += `✔ ${selectedList.length} kod işlendi\n`;
+    logAdd(`✔ ${selectedList.length} kod işlendi`);
 }
 
 /* --------------------------------------------
-   EŞLEŞEN FOTOĞRAFLARI TOPLA
+   EŞLEŞEN FOTOĞRAFLARI KOPYALA
 -------------------------------------------- */
 async function matchAndCopy() {
-    const log = document.getElementById("log");
 
     if (!selectedList.length) return alert("⚠ Önce kodları yapıştır!");
     const files = document.getElementById("localFolder").files;
+
     if (!files.length) return alert("⚠ Bilgisayardaki fotoğraf klasörünü seç!");
 
     const root = await window.showDirectoryPicker();
@@ -115,16 +126,16 @@ async function matchAndCopy() {
     for (const file of files) {
         if (!selectedList.some(link => link.includes(file.name))) continue;
 
-        const fileHandle = await dest.getFileHandle(file.name, { create: true });
-        const writable = await fileHandle.createWritable();
-        await writable.write(await file.arrayBuffer());
-        await writable.close();
+        const fh = await dest.getFileHandle(file.name, { create: true });
+        const w = await fh.createWritable();
+        await w.write(await file.arrayBuffer());
+        await w.close();
 
-        log.value += `✔ Kopyalandı → ${file.name}\n`;
+        logAdd(`✔ Kopyalandı → ${file.name}`);
         count++;
     }
 
-    log.value += `\n🎉 Toplam ${count} fotoğraf kopyalandı!\n`;
+    logAdd(`\n🎉 Toplam ${count} fotoğraf kopyalandı!`);
 }
 
 /* --------------------------------------------
@@ -136,4 +147,3 @@ function copyURL() {
     navigator.clipboard.writeText(inp.value);
     alert("📎 Müşteri linki kopyalandı!");
 }
-

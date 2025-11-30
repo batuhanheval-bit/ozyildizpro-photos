@@ -1,25 +1,7 @@
-// --- FOTOĞRAF YÜKLEME ---
-async function uploadPhoto(file) {
-  const formData = new FormData();
-  formData.append("file", file);
-
-  const res = await fetch("/api/upload", {
-    method: "POST",
-    body: formData,
-  });
-
-  const data = await res.json();
-  if (!data.success) {
-    alert("HATA: " + data.error);
-    return null;
-  }
-
-  return data.url;
-}
-
 // --- FOTOĞRAF SEÇME ve LİSTELEME ---
 let photoList = [];
 
+// Foto yükleme işlemi uploadPhotos.js içinde yapılır!
 document.getElementById("photoUpload").addEventListener("change", async (e) => {
   const file = e.target.files[0];
   if (!file) return;

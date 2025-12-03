@@ -6,6 +6,7 @@
     <style>
         body { font-family: Arial; padding: 20px; }
         h1 { font-size: 28px; margin-bottom: 20px; }
+
         .box { border: 1px solid #ccc; padding: 15px; margin-bottom: 20px; border-radius: 8px; }
         label { font-weight: bold; display: block; margin-bottom: 5px; }
         input[type="file"], input[type="text"], textarea { width: 100%; padding: 8px; }
@@ -20,11 +21,13 @@
 <div class="box">
     <label>Bilgisayardan Tek Fotoğraf Seç:</label>
     <input type="file" id="singlePhoto" accept="image/*">
+    <button id="uploadSingleBtn">YÜKLE</button>
 </div>
 
 <div class="box">
     <label>Bilgisayar Fotoğraf Klasörü:</label>
     <input type="file" id="folderInput" webkitdirectory directory multiple>
+    <button id="uploadFolderBtn">Klasörü Yükle</button>
 </div>
 
 <div class="box">
@@ -44,7 +47,6 @@
     <textarea id="logBox"></textarea>
 </div>
 
-<!-- JS bağlantıları -->
 <script src="/js/uploadPhotos.js"></script>
 <script src="/js/admin.js"></script>
 

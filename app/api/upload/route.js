@@ -3,7 +3,6 @@ import { NextResponse } from "next/server";
 
 export async function POST(req) {
   try {
-    // Form verisini al
     const formData = await req.formData();
     const file = formData.get("file");
 
@@ -14,9 +13,7 @@ export async function POST(req) {
       );
     }
 
-    // Token'ı ENV'den çek
     const token = process.env.BLOB_READ_WRITE_TOKEN;
-
     if (!token) {
       return NextResponse.json(
         { success: false, error: "Blob token bulunamadı. (ENV eksik)" },
@@ -24,13 +21,11 @@ export async function POST(req) {
       );
     }
 
-    // Upload işlemi
     const upload = await put(file.name, file, {
       access: "public",
-      token, // <-- önemli
+      token,
     });
 
-    // Başarılı cevap
     return NextResponse.json({
       success: true,
       url: upload.url,

@@ -1,55 +1,12 @@
-function addLog(text) {
-    const logBox = document.getElementById("logBox");
-    logBox.value += text + "\n";
-}
+document.addEventListener("DOMContentLoaded", () => {
+    const uploadBtn = document.getElementById("uploadBtn");
 
-// Tek foto yükleme
-document.getElementById("uploadSingleBtn").addEventListener("click", async () => {
-    const file = document.getElementById("singlePhoto").files[0];
-    if (!file) {
-        addLog("Fotoğraf seçilmedi.");
+    if (!uploadBtn) {
+        console.error("uploadBtn bulunamadı!");
         return;
     }
 
-    addLog("Yükleniyor: " + file.name);
-    try {
-        const url = await uploadPhoto(file);
-        addLog("Yüklendi → " + url);
-    } catch (err) {
-        addLog("HATA → " + err.message);
-    }
-});
-
-// Klasör yükleme
-document.getElementById("uploadFolderBtn").addEventListener("click", async () => {
-    const files = document.getElementById("folderInput").files;
-
-    if (files.length === 0) {
-        addLog("Klasör seçilmedi.");
-        return;
-    }
-
-    for (const file of files) {
-        addLog("Yükleniyor: " + file.name);
-        try {
-            const url = await uploadPhoto(file);
-            addLog("Yüklendi → " + url);
-        } catch (err) {
-            addLog("HATA → " + err.message);
-        }
-    }
-});
-
-// Link kopyala
-document.getElementById("copyLinkBtn").addEventListener("click", () => {
-    const link = document.getElementById("customerLink").value;
-    navigator.clipboard.writeText(link);
-    addLog("Müşteri linki kopyalandı.");
-});
-
-// Kod yapıştır
-document.getElementById("pasteCodesBtn").addEventListener("click", async () => {
-    const text = await navigator.clipboard.readText();
-    document.getElementById("selectionCodes").value = text;
-    addLog("Kodlar yapıştırıldı.");
+    uploadBtn.addEventListener("click", () => {
+        console.log("Upload butonuna basıldı.");
+    });
 });

@@ -5,13 +5,8 @@
     <title>ÖzyıldızPRO Admin Panel</title>
     <style>
         body { font-family: Arial; padding: 20px; }
-        h1 { font-size: 28px; margin-bottom: 20px; }
-
-        .box { border: 1px solid #ccc; padding: 15px; margin-bottom: 20px; border-radius: 8px; }
-        label { font-weight: bold; display: block; margin-bottom: 5px; }
-        input[type="file"], input[type="text"], textarea { width: 100%; padding: 8px; }
-        button { padding: 8px 15px; margin-top: 10px; cursor: pointer; }
-        #logBox { height: 150px; width: 100%; }
+        .box { margin-bottom: 20px; }
+        textarea { width: 100%; height: 150px; }
     </style>
 </head>
 <body>
@@ -19,32 +14,14 @@
 <h1>ÖzyıldızPRO Admin Panel</h1>
 
 <div class="box">
-    <label>Bilgisayardan Tek Fotoğraf Seç:</label>
-    <input type="file" id="singlePhoto" accept="image/*">
-    <button id="uploadSingleBtn">YÜKLE</button>
+    <label>Bilgisayardan Tek Fotoğraf Seç:</label><br>
+    <input type="file" id="fileInput"><br><br>
+    <button id="uploadBtn">YÜKLE</button>
 </div>
 
 <div class="box">
-    <label>Bilgisayar Fotoğraf Klasörü:</label>
-    <input type="file" id="folderInput" webkitdirectory directory multiple>
-    <button id="uploadFolderBtn">Klasörü Yükle</button>
-</div>
-
-<div class="box">
-    <label>Müşteri Linki:</label>
-    <input type="text" id="customerLink">
-    <button id="copyLinkBtn">Kopyala</button>
-</div>
-
-<div class="box">
-    <label>Seçim Kodlarını Yapıştır:</label>
-    <textarea id="selectionCodes" rows="4"></textarea>
-    <button id="pasteCodesBtn">Kodları Yapıştır</button>
-</div>
-
-<div class="box">
-    <label>Log</label>
-    <textarea id="logBox"></textarea>
+    <label>LOG</label><br>
+    <textarea id="log"></textarea>
 </div>
 
 <script src="/js/uploadPhotos.js"></script>

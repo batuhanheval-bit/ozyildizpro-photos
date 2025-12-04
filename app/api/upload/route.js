@@ -13,38 +13,40 @@ export async function POST(req) {
         }
 
         const token = process.env.BLOB_READ_WRITE_TOKEN;
+
         if (!token) {
             return NextResponse.json(
-                { success: false, error: "Token bulunamadı (ENV eksik)" },
+                { success: false, error: "Blob token bulunamadı (ENV eksik)" },
                 { status: 500 }
             );
         }
 
-        // --- Dosyayı buffer olarak oku ---
+        // ---- Dosyayı Buffer olarak oku ----
         const arrayBuffer = await file.arrayBuffer();
         const buffer = Buffer.from(arrayBuffer);
 
-        const upload = await fetch("https://api.vercel.com/v2/blobs", {
+        // ---- VERCEL BLOB V1 ----
+        const upload = await fetch("https://blob.vercel-storage.com/upload", {
             method: "POST",
             headers: {
-                "Authorization": `Bearer ${token}`,
-                "Content-Type": file.type
+                Authorization: `Bearer ${token}`,
+                "x-vercel-filename": file.name,
             },
             body: buffer
         });
 
         const data = await upload.json();
 
-        if (!upload.ok) {
+        if (!data || !data.url) {
             return NextResponse.json(
-                { success: false, error: data.error || "Yükleme hatası" },
-                { status: upload.status }
+                { success: false, error: data.error || "Blob API yanıtı geçersiz" },
+                { status: 500 }
             );
         }
 
         return NextResponse.json({
             success: true,
-            url: data.url
+            url: data.url,
         });
 
     } catch (err) {

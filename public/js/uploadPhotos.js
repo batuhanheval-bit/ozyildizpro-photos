@@ -16,8 +16,7 @@ document.getElementById("uploadBtn").addEventListener("click", async () => {
     try {
         const response = await fetch("/api/upload", {
             method: "POST",
-            body: formData,
-            duplex: "half"
+            body: formData
         });
 
         const result = await response.json();
@@ -28,6 +27,7 @@ document.getElementById("uploadBtn").addEventListener("click", async () => {
         }
 
         logBox.value += `BAŞARILI ✓ → ${result.url}\n`;
+
     } catch (err) {
         logBox.value += `HATA → ${err.message}\n`;
     }

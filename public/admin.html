@@ -3,25 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <title>ÖzyıldızPRO Admin Panel</title>
-    <style>
-        body { font-family: Arial; padding: 20px; }
-        .box { margin-bottom: 20px; }
-        textarea { width: 100%; height: 150px; }
-    </style>
 </head>
 <body>
 
 <h1>ÖzyıldızPRO Admin Panel</h1>
 
-<div class="box">
+<div>
     <label>Bilgisayardan Tek Fotoğraf Seç:</label><br>
-    <input type="file" id="fileInput"><br><br>
+    <input type="file" id="fileInput"><br>
     <button id="uploadBtn">YÜKLE</button>
 </div>
 
-<div class="box">
+<br>
+
+<div>
     <label>LOG</label><br>
-    <textarea id="log"></textarea>
+    <textarea id="log" style="width:95%;height:200px;"></textarea>
 </div>
 
 <script src="/js/uploadPhotos.js"></script>

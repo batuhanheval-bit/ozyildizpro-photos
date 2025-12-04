@@ -22,7 +22,7 @@ document.getElementById("uploadBtn").addEventListener("click", async () => {
         const result = await response.json();
 
         if (!response.ok) {
-            logBox.value += `HATA → ${result.error}\n`;
+            logBox.value += `HATA → ${JSON.stringify(result)}\n`;
             return;
         }
 
